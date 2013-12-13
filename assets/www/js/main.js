@@ -1,31 +1,65 @@
-$(document).ready(function(){
-	$.getJSON("data/FlangeArrays.json").done(
-		function(data){
+var BMBox = {};
+
+$(document).ready(function(){	
+	$.getJSON("data/FlangeArrays.json").done(function(data){
+			BMBox.data = data;
 			console.log(data);
 			console.log(data.fSizes[0]);
 			$('#text1').text(data.fSizes[0]);
-			fSizeTown = data.fSizes;
-			var options = $("#options");
-			$.each(fSizeTown, function(i, value) {
-    			$(options).append($('<option>').text(value).attr('value', value));
+			var selectSize = $("#select_size");
+			var selectRate = $("#select_rate");
+			$.each(data.fSizes, function(i, value) {
+    			$(selectSize).append($('<option>').text(value).attr('value', value));
 			});
-		});
+			$.each(data.fRatings, function(i, value) {
+    			$(selectRate).append($('<option>').text(value).attr('value', value));
+			});
+	});
 	
-	$("#btn1").click(
-		function(){
-			
-    		//$("#text1").text(flangeTest);.
-    		alert("banana");
-    		console.log("banana");
-    	}
-    );
+	$("#btn1").click(function(){
+		calcFlange();
+	});
     
 	$("#btn2").click(
   			function(){
     			$("#text2").html("<b>Hello world!</b>");
-    		}
-	);
-	
-	$("#options").change(function(event, changeHandler){
-	});
+    });
 });
+
+function calcFlange() {
+	sSize = $("#select_size");
+	sRate = $("#select_rate");
+
+	rateInd = $(sRate)[0].selectedIndex;
+	sizeKey = $(sSize).val();
+	
+	//Inside the $.each() callback above, you would do $.each(this.subaction, function() { alert(this.name); });, that would give you A, B, C, etc. - test it out here:
+
+	switch(rateInd) {
+		case 0:
+			//var flangeDataArr = BMBox.data.fStats150;
+			if(sizeKey === "10"){
+				alert(sizeKey + "naana");
+			}
+				//console.log(flangeDataArr);
+			break;
+		/*
+		case 1:
+			flangeDataArr = data.fStats300[sizeInd];
+			break;
+		case 2:
+			flangeDataArr = data.fStats400[sizeInd];
+			break;
+		case 3:
+			flangeDataArr = data.fStats600[sizeInd];
+			break;
+		case 4:
+			flangeDataArr = data.fStats900[sizeInd];
+	s		break;
+		case 5:
+			flangeDataArr = data.fStats1500[sizeInd];
+			break;
+		*/
+		}
+			
+}
