@@ -1,55 +1,74 @@
+
 var BMBox = {};
 
-$(document).ready(function(){	
-	$.getJSON("data/FlangeArrays.json").done(function(data){
-		BMBox.data = data;
-		console.log(data);
-		popSelects(data);
-	});
-	$("#flange-send").click(function(){
-		calcFlange();
-	});
+(function(context) {	
+
+	context.loadJSON = function() {
+		$("#flange-send").click(function(){
+			calcFlange();
+		});
 	
-	$("#stud-send").click(function(){
-		calcStud();
-	});
+		$("#stud-send").click(function(){
+			calcStud();
+		});
+		
+		$.getJSON("data/FlangeArrays.json").done(function(data){
+			context.postLoad(data);
+		});
+		
+
+	};
+		
+	context.postLoad = function(data) {
+		context.data = data;
+		context.popSelects();
+		
+		
+	};
+	
+	context.popSelects = function() {
+		data = context.data;
+		context.sizeSel = selectSize = $("#select-flange-size");
+		context.rateSel = selectRate = $("#select-flange-rating");
+		
+		context.studSel = selectStud = $("#stud-select");
+		
+		$.each(data.fSizes, function(i, value) {
+	   		selectSize.append($('<option>').text(value + "\"").attr('value', value));
+		});
+		$.each(data.fRatings, function(i, value) {
+	   		selectRate.append($('<option>').text(value + "#").attr('value', value));
+		});
+	
+		studSizes = data.studSizes;
+		studSizeOrd = data.studSizeOrdered;
+		var studStatsOrdered = [];
+		
+		for(var i = 0; i < studSizeOrd.length; i++) {
+			selectStud.append($('<option>').text(studSizeOrd[i] + "\"").attr('value', studSizeOrd[i] + "\""));
+			studSizeOrdString = studSizeOrd[i].toString();
+			console.log(studSizeOrdString);
+			studStatsOrdered[i] = [studSizes[studSizeOrdString]];
+		} 
+		
+		context.studStatsOrdered = studStatsOrdered;
+		context.sendBut = $("#flange-send");
+		context.sendBut.button("disable");
+		context.sendBut.button("refresh");
+		
+		context.studBut = $("#stud-send");
+		context.studBut.button("disable");
+		context.studBut.button("refresh");
+		addSelectChange();	
+	};
+})(BMBox);
+
+$(document).ready(function(){
+	BMBox.loadJSON();	
 });
 
 function popSelects(data){
-	BMBox.sizeSel = selectSize = $("#select-flange-size");
-	BMBox.rateSel = selectRate = $("#select-flange-rating");
-	
-	BMBox.studSel = selectStud = $("#stud-select");
-	
-	$.each(data.fSizes, function(i, value) {
-   		selectSize.append($('<option>').text(value + "\"").attr('value', value));
-	});
-	$.each(data.fRatings, function(i, value) {
-   		selectRate.append($('<option>').text(value + "#").attr('value', value));
-	});
-	
-	/*
-	$.each(data.studSizes, function(i, value) {
-		selectStud.append($('<option>').text(i + "\"").attr('value', i));
-	});
-	*/
-	
-	studSizes = data.studSizes;
-	studSizeOrd = data.studSizeOrdered;
-	console.log(studSizes);
-	
-	for(var i = 0; i < studSizeOrd.length; i++) {
-		selectStud.append($('<option>').text(studSizes[i] + "\"").attr('value', studSizes[i] + "\""));
-	} 
-	
-	BMBox.sendBut = $("#flange-send");
-	BMBox.sendBut.button("disable");
-	BMBox.sendBut.button("refresh");
-	
-	BMBox.studBut = $("#stud-send");
-	BMBox.studBut.button("disable");
-	BMBox.studBut.button("refresh");
-	addSelectChange();
+
 }
 	
 function addSelectChange(){ 
@@ -82,10 +101,16 @@ function updateSendButton() {
 
 function calcStud() {
 	console.log("ran calc stud");
-	studVal = BMBox.studSel.val();	
+	studVal = BMBox.studSel[0].selectedIndex;	
 	console.log("studval: " + studVal);
-	getStudStats(studVal);
+	getStudStatsOrdered(studVal - 1);
 	displayStud();
+}
+
+
+function getStudStatsOrdered(studSize){
+	BMBox.studStats = BMBox.studStatsOrdered[studSize][0];
+	console.log(BMBox.studStats);
 }
 	
 function displayStud(){
@@ -173,5 +198,4 @@ function displayFlange() {
 		studString + "\n"
 		+ toolString + "\n"
 		+ torqueString);
-	
 }
