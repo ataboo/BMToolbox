@@ -28,9 +28,20 @@ function popSelects(data){
    		selectRate.append($('<option>').text(value + "#").attr('value', value));
 	});
 	
+	/*
 	$.each(data.studSizes, function(i, value) {
 		selectStud.append($('<option>').text(i + "\"").attr('value', i));
 	});
+	*/
+	
+	studSizes = data.studSizes;
+	studSizeOrd = data.studSizeOrdered;
+	console.log(studSizes);
+	
+	for(var i = 0; i < studSizeOrd.length; i++) {
+		selectStud.append($('<option>').text(studSizes[i] + "\"").attr('value', studSizes[i] + "\""));
+	} 
+	
 	BMBox.sendBut = $("#flange-send");
 	BMBox.sendBut.button("disable");
 	BMBox.sendBut.button("refresh");
@@ -79,7 +90,7 @@ function calcStud() {
 	
 function displayStud(){
 	studStats = BMBox.studStats;
-	studSize = BMBox.studBut.val();
+	studSize = BMBox.studSel.val();
 	studString = ("Stud Size: " + studSize + "\"");
 	toolString = ("Wrench: " + studStats[0] + "\",   Drift Pin: " + studStats[1] + "\"");
 	torqueString = ("B7 Torque: " + studStats[3] + " ft-lbs \nB7M Torque: " + studStats[2] + " ft-lbs");
