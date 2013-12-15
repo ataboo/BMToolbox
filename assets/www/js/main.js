@@ -1,33 +1,3 @@
-(function( $ ) {
-	$.fn.noClickDelay = function() {
-		var $wrapper = this;
-		var $target = this;
-		var moved = false;
-		$wrapper.bind('touchstart mousedown',function(e) {
-			e.preventDefault();
-			moved = false;
-			$target = $(e.target);
-			if($target.nodeType == 3) {
-				$target = $($target.parent());
-			}
-			$target.addClass('pressed');
-			$wrapper.bind('touchmove mousemove',function(e) {
-				moved = true;
-				$target.removeClass('pressed');
-			});
-			$wrapper.bind('touchend mouseup',function(e) {
-				$wrapper.unbind('mousemove touchmove');
-				$wrapper.unbind('mouseup touchend');
-				if(!moved && $target.length) {
-					$target.removeClass('pressed');
-					$target.trigger('click');
-					$target.focus();
-				}
-			});
-		});
-	};
-})( jQuery );
-
 var flangeBox = {};  //Used for context to coordinate between the functions.
 
 /*This parses a JSON file with values for ASME flange tables, populates selectors accordingly
@@ -37,8 +7,9 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 (function(context) {	
 
 	context.startLoad = function() {
-		$('#.flange-sel').noClickDelay();
-
+		$(function() {
+            FastClick.attach(document.body);
+        });
 		
 		$("#flange-send").click(function(){
 			context.calcFlange();
@@ -88,7 +59,7 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 		for(var i = 0; i < studSizeOrd.length; i++) {
 			selectStud.append($('<option>').text(studSizeOrd[i] + "\"").attr('value', studSizeOrd[i] + "\""));
 			studSizeOrdString = studSizeOrd[i].toString();
-			console.log(studSizeOrdString);
+			//console.log(studSizeOrdString);
 			studStatsOrdered[i] = [studSizes[studSizeOrdString]];
 		} 
 		
