@@ -72,35 +72,23 @@
 		</fieldset>
 	  </div>
 	</div>
-	
-	<h3>Wages:</h3>
+	<hr>
 	<div class="checkbox-area">
-	  <div class="check-pair">
+		<h3>Wages:</h3>
 		<select class="select-check" name="wage-select" id="wage-select">
 		</select>
-		<input class="custom-val-input" type="number" name="wage-input" id="wage-input" value="40" data-mini="true" />
-	  </div>
-      <div class="check-pair">
-		<label><input type="checkbox" name="checkbox-nights" /> Night Shift </label>
-		<input class="custom-val-input" type="number" name="night-input" id="night-input" value="3" data-mini="true" />
-	  </div>
-	  <div class="check-pair">
-		<label><input type="checkbox" name="checkbox-travel-week" /> Weekly Travel </label>
-		<input class="custom-val-input" type="number" name="week-travel-input" id="week-travel-input" value="216" data-mini="true" />
-	  </div>
-	  <div class="check-pair">
-		<label><input type="checkbox" name="checkbox-travel-day" /> Daily Travel </label>
-		<input class="custom-val-input" type="number" name="daily-travel-input" id="daily-travel-input" value="40" data-mini="true" />
-	  </div>
+		<label><input type="checkbox" name="checkbox-nights" />Nights = $0.00</label>
+		<label><input type="checkbox" name="checkbox-travel-week" />Travel (wk) = $216.00</label>
+		<label><input type="checkbox" name="checkbox-travel-day" />Travel (day) = $25.00</label>
 	</div>
-	
-	<h3>Deductions:</h3>
+	<hr>
 	<div class="checkbox-area">
-		<label><input type="checkbox" name="checkbox-tax" /> Income Tax </label>
-		<label><input type="checkbox" name="checkbox-ei" /> EI/CPP </label>
- 		<label><input type="checkbox" name="checkbox-dues" /> Dues </label>
-  	</div>
- 
+		<h3>Deductions:</h3>
+		<label><input type="checkbox" name="checkbox-tax" /> Income Tax = $0.00 </label>
+		<label><input type="checkbox" name="checkbox-ei" /> EI/CPP = $0.00</label>
+		<label><input type="checkbox" name="checkbox-dues" /> Dues $0.00</label>
+	</div>
+  	   
 	<!-- call script method -->
 	<script type="text/javascript">
 		wageCalcBox.setupAndStart();

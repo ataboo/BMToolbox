@@ -37,22 +37,21 @@
     line-height: 0;
 }
 
-.check-pair {
-	width:90%;
+.checkbox-area {
+	width:95%;
     margin:0 auto;
-    text-align: justify;
-    -ms-text-justify: distribute-all-lines;
-    text-justify: distribute-all-lines;
 }
 
-.check-pair .ui-select, 
-.check-pair .ui-checkbox,
-.check-pair .ui-input-text {
-	width = 40%;
-    display: inline-block;
-    *display: inline;
-    zoom: 1
-
+.checkbox-area .ui-select, 
+.checkbox-area .ui-checkbox,
+.checkbox-area .check-label {
+	/*background-color: red;*/
+	vertical-align: middle;
 }
 
-.check-pair .ui-input-text {}
+/*
+.checkbox-area .ui-checkbox {
+	background-color: red;
+	
+}
+*/
