@@ -8,7 +8,7 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 
 	context.startLoad = function() {
 		$(function() {
-            FastClick.attach(document.body);
+            //FastClick.attach(document.body);
         });
 		
 		$("#flange-send").click(function(){
