@@ -37,58 +37,55 @@
 		  <label for="sun-hours-select">Sunday Hours</label>
 		  <select data-mini="true" data-icon="false"
 			class="select-day" name="sun-hours-select" id="sun-hours-select">
-			<option>13</option>
 		  </select>
 		  <label for="mon-hours-select">Monday Hours</label>
 		  <select data-mini="true" data-icon="false"
 			class="select-day" name="mon-hours-select" id="mon-hours-select">
-			<option>13</option>
 		  </select>
 		  <label for="tue-hours-select">Tuesday Hours</label>
 		  <select data-mini="true" data-icon="false"
 			class="select-day" name="tue-hours-select" id="tue-hours-select">
-			<option>13</option>
 		  </select>
 		  <label for="wed-hours-select">Wednesday Hours</label>
 		  <select data-mini="true" data-icon="false"
 			class="select-day" name="wed-hours-select" id="wed-hours-select">
-			<option>13</option>
 		  </select>
 		  <label for="thu-hours-select">Thursday Hours</label>
 		  <select data-mini="true" data-icon="false"
 			class="select-day" name="thu-hours-select" id="thu-hours-select">
-			<option>13</option>
 		  </select>
 		  <label for="fri-hours-select">Friday Hours</label>
 		  <select data-mini="true" data-icon="false"
 			class="select-day" name="fri-hours-select" id="fri-hours-select">
-			<option>13</option>
 		  </select>
 		  <label for="sat-hours-select">Saturday Hours</label>
 		  <select data-mini="true" data-icon="false"
 			class="select-day" name="sat-hours-select" id="sat-hours-select">
-			<option>13</option>
 		  </select>
 		</fieldset>
 	  </div>
+		<div id="hours-sum" class="text-dialogue">    1x: 0, 1.5x: 0 2x: 0, total: 0</div>
 	</div>
 	<hr>
 	<div class="checkbox-area">
 		<h3>Wages:</h3>
 		<select class="select-check" name="wage-select" id="wage-select">
 		</select>
-		<label><input type="checkbox" name="checkbox-nights" />Nights = $0.00</label>
-		<label><input type="checkbox" name="checkbox-travel-week" />Travel (wk) = $216.00</label>
-		<label><input type="checkbox" name="checkbox-travel-day" />Travel (day) = $25.00</label>
+		<label><input type="checkbox" name="night-toggle" id="night-toggle" class="toggle-check"/>Nights = $0.00</label>
+		<label><input type="checkbox" name="checkbox-travel-week" class="toggle-check"/>Travel (week) = $216.00</label>
+		<label><input type="checkbox" name="checkbox-travel-day" class="toggle-check"/>Travel (day) = $25.00</label>
+		<div class="title-dialogue" id="gross-sum-dialogue">    Taxable Gross: $0</div>
+		<div class="title-dialogue" id="exempt-sum-dialogue">    Exempt Gross: $0</div>	
 	</div>
 	<hr>
 	<div class="checkbox-area">
 		<h3>Deductions:</h3>
-		<label><input type="checkbox" name="checkbox-tax" /> Income Tax = $0.00 </label>
-		<label><input type="checkbox" name="checkbox-ei" /> EI/CPP = $0.00</label>
-		<label><input type="checkbox" name="checkbox-dues" /> Dues $0.00</label>
+		<label><input type="checkbox" name="checkbox-tax" class="toggle-check"/> Income Tax = $0.00 </label>
+		<label><input type="checkbox" name="checkbox-ei" class="toggle-check"/> EI/CPP = $0.00</label>
+		<label><input type="checkbox" name="checkbox-dues" class="toggle-check"/> Dues $0.00</label>
+  		<div class="title-dialogue" id="deductions-dialogue">    Total Deductions: $0</div>
+		<h3 class="header-dialogue" id="takehome-dialogue">    Takehome: $0</h3>
 	</div>
-  	   
 	<!-- call script method -->
 	<script type="text/javascript">
 		wageCalcBox.setupAndStart();
