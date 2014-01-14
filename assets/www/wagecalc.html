@@ -71,18 +71,23 @@
 		<h3>Wages:</h3>
 		<select class="select-check" name="wage-select" id="wage-select">
 		</select>
-		<label><input type="checkbox" name="night-toggle" id="night-toggle" class="toggle-check"/>Nights = $0.00</label>
-		<label><input type="checkbox" name="checkbox-travel-week" class="toggle-check"/>Travel (week) = $216.00</label>
-		<label><input type="checkbox" name="checkbox-travel-day" class="toggle-check"/>Travel (day) = $25.00</label>
+	    <label><input type="checkbox" id="checkbox-fourtens" class="toggle-check"/>Four-Tens Schedule</label>
+		<label for="checkbox-night"><input type="checkbox" id="checkbox-night" class="toggle-check"/>Nights = $0.00</label>
+		<label><input type="checkbox" id="checkbox-travel-week" class="toggle-check"/>Travel (week) = $216.00</label>
+		<label><input type="checkbox" id="checkbox-travel-day" class="toggle-check"/>Travel (day) = $25.00</label>
 		<div class="title-dialogue" id="gross-sum-dialogue">    Taxable Gross: $0</div>
 		<div class="title-dialogue" id="exempt-sum-dialogue">    Exempt Gross: $0</div>	
 	</div>
 	<hr>
 	<div class="checkbox-area">
 		<h3>Deductions:</h3>
-		<label><input type="checkbox" name="checkbox-tax" class="toggle-check"/> Income Tax = $0.00 </label>
-		<label><input type="checkbox" name="checkbox-ei" class="toggle-check"/> EI/CPP = $0.00</label>
-		<label><input type="checkbox" name="checkbox-dues" class="toggle-check"/> Dues $0.00</label>
+	  <select data-mini="true" class="select-day" id="tax-select">
+	  	<option> Income Tax AB 2014 </option>
+		<option> Income Tax ON 2014 </option>
+	  </select>
+	  <label><input type="checkbox" id="checkbox-tax" class="toggle-check"/> Income Tax = $0.00 </label>
+	  <label><input type="checkbox" id="checkbox-ei" class="toggle-check"/> EI/CPP = $0.00</label>
+	  <label><input type="checkbox" id="checkbox-dues" class="toggle-check"/> Dues = $0.00</label>
   		<div class="title-dialogue" id="deductions-dialogue">    Total Deductions: $0</div>
 		<h3 class="header-dialogue" id="takehome-dialogue">    Takehome: $0</h3>
 	</div>
