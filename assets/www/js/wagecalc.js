@@ -81,21 +81,33 @@ if (!String.prototype.format) {
 		//Dialogues [link to item, default text or preamble]
 		ctx.hoursSumDia = [$("#hours-sum"), "  Hours:  1x: {0},  1.5x: {1},  2x: {2}"];
 		ctx.grossSumDia = [$("#gross-sum-dialogue"), "    Taxable Gross:  ${0}"];
-		ctx.exemptSumDia = [$("#exempt-dialogue"), "    Tax Exempt:  ${0}"];
+		ctx.exemptSumDia = [$("#exempt-sum-dialogue"), "    Tax Exempt:  ${0}"];
 		ctx.deductionsSumDia = [$("#deductions-dialogue"), "    Total Deductions:  ${0}"];
 		ctx.netSumDia = [$("#takehome-dialogue"), "    Take Home:  ${0}"];
 
 		//CheckBoxes
 		ctx.fourtensCheck = $("#checkbox-fourtens");
 		ctx.nightsCheck = [$("#checkbox-night"), "Nights = ${0}"];
-		ctx.weekTravelCheck = $("#checkbox-travel-week");
-		ctx.dayTravelCheck = $("#checkbox-travel-day");
 		ctx.taxCheck = [$("#checkbox-tax"), "Income Tax = ${0}"];
 		ctx.eiCheck = [$("#checkbox-ei"), "EI/CPP = ${0}"];
-		ctx.duesCheck = [$("#checkbox-dues"), "Union Dues = ${0}"];
+		ctx.duesCheck = [$("#checkbox-dues"), "Working Dues = ${0}"];
 		ctx.toggleClass = $(".toggle-check");
 		ctx.startChecked = $(".start-checked");
 		ctx.settingsButton = $("#settings-button");
+		 
+		//[value, checkbox, string proto, custom textbox, taxable checkbox]
+		ctx.weekTravel = [220, $("#checkbox-travel-week"), "Weekly Travel = ${0}", $("#textbox-weekly-travel"), $("taxable-weekly-travel")];
+		ctx.dayTravel = [20, $("#checkbox-travel-day"), "Daily Travel = ${0}", $("#textbox-daily-travel"), $("taxable-daily-travel")];
+		ctx.loa = [195, $("#checkbox-loa"), "LOA = ${0}", $("#textbox-loa"), $("#taxable-loa")];
+		ctx.monthlyDues = [37.90, $("#checkbox-monthly-dues"), "Monthly Dues = ${0}", $("#textbox-monthly-dues"), 0]; 
+		
+		ctx.addTax = [0, $("#textbox-addtax")];
+		ctx.customWage = [40, $("#textbox-wage")];
+		ctx.customDays = [
+		  [$("textbox-a-sing"), 8.5, $("textbox-a-half"), 2, $("textbox-a-double"), 1.5],
+		  [$("textbox-b-sing"), 5, $("textbox-b-half"), 0, $("textbox-b-double"), 0],
+		  [$("textbox-c-sing"), 1, $("textbox-c-half"), 2, $("textbox-c-double"), 3]
+		];
 		
 		ctx.populateSelects();
 		ctx.setClickListeners();
@@ -106,7 +118,7 @@ if (!String.prototype.format) {
 		{
 			var wageString = ctx.wageOptions[i][0] + ":  $" + ctx.wageOptions[i][1].toString();
 	   		ctx.wageSel.append($('<option>').text(wageString).attr('value', ctx.wageOptions[i][1]));
-			if (i == 3) ctx.defaultWageVal = ctx.wageOptions[i][1];
+			if (i == 5) ctx.defaultWageVal = ctx.wageOptions[i][1];
 			//console.log("Added: " + ctx.wageOptions[i][0]);
 		};
 
@@ -121,12 +133,6 @@ if (!String.prototype.format) {
 
 	//binds click listener to select and toggle classes to run updateCalc
 	ctx.setClickListeners = function() {
-		/*
-		ctx.daySelClass.bind('change', function() {
-								 ctx.updateCalc();
-							 });
-		*/
-							 
 		ctx.toggleClass.bind('click', function() {
 			ctx.updateCalc();	
 							 });
@@ -138,9 +144,11 @@ if (!String.prototype.format) {
 			ctx.updateCalc();
 		});
 		
-		ctx.settingsButton.bind('click', function() {
-			ctx.settingsDialog();
+		/*
+		ctx.commitButton.bind('click', function() {
+			ctx.commitSettings();
 		});
+		*/
 
 	};
 
@@ -152,6 +160,8 @@ if (!String.prototype.format) {
 		ctx.taxCheck[0].prop("checked", true).checkboxradio('refresh');
 		ctx.eiCheck[0].prop("checked", true).checkboxradio('refresh');
 		ctx.duesCheck[0].prop("checked", true).checkboxradio('refresh');
+		
+		ctx.updateCalc();
 	};
 
 	//--------------------Update-------------------------
@@ -167,34 +177,23 @@ if (!String.prototype.format) {
 	ctx.calcPay = function() {
 		ctx.hrsWorked = 0;
 		ctx.hrsArr = [0,0,0];
-		ctx.weekHrs = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
-		ctx.deductions = [0,0,0,0,0,0];  //sum, fedtax, provtax, cpp, ei, dues 
-		ctx.taxExempt = [0,0,0]; //sum, travel, loa
+		ctx.deductions = [0,0,0,0,0,0,0];  //sum, fedtax, provtax, cpp, ei, working dues, monthly dues 
+		ctx.taxExempt = 0; //sum
 		ctx.nightPrem = 0;
 		ctx.isFourTens = ctx.fourtensCheck.prop('checked');
-		ctx.travelDays = 0;
+		ctx.travelDayCount = 0;
+		ctx.grossPay = 0;
 		
+		var lastHrsWorked = 0;
 		for(var i = 0; i < ctx.weekArr.length; i++) {
 			var dayArr = [0,0,0];
 			var parsed = parseFloat(ctx.weekArr[i].val());
-			if(parsed < 0) {  //custom days
-				var customIndex = 0;
-				switch (parsed) {
-					case -1:  //custom A
-						customIndex = 0;
-						break;
-					case -2:  //custom B
-						customIndex = 1;
-						break;
-					case -3:  //custom C
-						customIndex = 2;
-						break;
-				}
-				//ctx.weekHrs[i] = blahblah[index];
-				
-				//don't forget hrsworked
-			} else {
-				ctx.hrsWorked += parsed;
+			if(parsed < 0) {  //custom days A=-1, B=-2, C=-3
+				var customIndex = -(parsed + 1);
+				dayArr[0] = ctx.customDays[customIndex][1];  //Single
+				dayArr[1] = ctx.customDays[customIndex][3];  //OT
+				dayArr[2] = ctx.customDays[customIndex][5];  //Double
+			} else {  //Use default 8/2/2 or 4 10s
 				if(i == 0 || i == 6) {  //Sun || Sat
 					dayArr = ctx.hrsSum(ctx.FIVE_WEEKEND, parsed);
 				} else {
@@ -209,11 +208,22 @@ if (!String.prototype.format) {
 					}
 				}
 			}
-			ctx.weekHrs[i] = dayArr;
 			ctx.hrsArr[0] += dayArr[0];
 			ctx.hrsArr[1] += dayArr[1];
 			ctx.hrsArr[2] += dayArr[2];
+			ctx.hrsWorked += dayArr[0] + dayArr[1] + dayArr[2];  //for nightshift
+				
+			if(ctx.hrsWorked - lastHrsWorked > 0) {
+				ctx.travelDayCount++;
+			}
+			lastHrsWorked = ctx.hrsWorked;
 		} //weekdays forloop
+		
+		ctx.bonuses = [  //value, active, taxable
+		  [ctx.weekTravel[0], ctx.weekTravel[1].prop('checked'), ctx.weekTravel[4].prop('checked')],  //[value, active, taxable]
+		  [ctx.dayTravel[0] * ctx.travelDayCount, ctx.dayTravel[1].prop('checked'), ctx.dayTravel[4].prop('checked')],
+		  [ctx.loa[0], ctx.loa[1].prop('checked'), ctx.loa[4].prop('checked')] //LOA
+		];
 		
 		ctx.wageVal = parseFloat(ctx.wageSel.val());
 		//todo custom wage
@@ -228,6 +238,16 @@ if (!String.prototype.format) {
 		ctx.grossNoVac = ctx.grossPay;
 		ctx.grossPay *= (1 + 0.1);  //vacation pay @ %10 
 		
+		$.each(ctx.bonuses, function(i, e){
+			if(e[1]){ //active toggle
+			  if(e[2]) {  //taxable
+				ctx.grossPay += e[0];
+			  } else {
+				ctx.taxExempt += e[0];
+			  }
+			}
+		});
+		
 		ctx.deductions[1] = ctx.taxFed(ctx.grossPay);
 		ctx.deductions[2] = ctx.taxAB(ctx.grossPay);  //Todo: province select
 		var cppEiDuesArr = ctx.cppEiDues(ctx.grossPay, ctx.grossNoVac);
@@ -235,23 +255,20 @@ if (!String.prototype.format) {
 		ctx.deductions[3] = cppEiDuesArr[0];
 		ctx.deductions[4] = cppEiDuesArr[1];
 		ctx.deductions[5] = cppEiDuesArr[2];
-		
-		//Todo: Tax exempt
+		ctx.deductions[6] = ctx.monthlyDues[0];
 		
 		ctx.deductions[1] = (ctx.taxCheck[0].prop('checked')) ? ctx.deductions[1] : 0;
 		ctx.deductions[2] = (ctx.taxCheck[0].prop('checked')) ? ctx.deductions[2] : 0;
 		ctx.deductions[3] = (ctx.eiCheck[0].prop('checked')) ? ctx.deductions[3] : 0;
 		ctx.deductions[4] = (ctx.eiCheck[0].prop('checked')) ? ctx.deductions[4] : 0;
 		ctx.deductions[5] = (ctx.duesCheck[0].prop('checked')) ? ctx.deductions[5] : 0;
-		
+		ctx.deductions[6] = (ctx.monthlyDues[1].prop('checked')) ? ctx.deductions[6] : 0;
 		
 		
 		for(var i = 1; i < ctx.deductions.length ; i++){  //get sum of deductions non zeroed
 			ctx.deductions[0] += ctx.deductions[i];
 		}
-		ctx.takeHome = ctx.grossPay - ctx.deductions[0];
-		
-		
+		ctx.takeHome = ctx.grossPay - ctx.deductions[0] + ctx.taxExempt;
 	};
 	
 	ctx.hrsSum = function(dayType, hrs){  //Splits for default contract days
@@ -338,6 +355,7 @@ if (!String.prototype.format) {
 		//[$("#hours-sum"), "  Hours:  1x: 0  1.5x: 0  2x: 0"];
 		ctx.hoursSumDia[0].text(ctx.hoursSumDia[1].format(ctx.hrsArr[0], ctx.hrsArr[1], ctx.hrsArr[2]));
 		ctx.grossSumDia[0].text(ctx.grossSumDia[1].format(ctx.grossPay.toFixed(2)));
+		ctx.exemptSumDia[0].text(ctx.exemptSumDia[1].format(ctx.taxExempt.toFixed(2)));
 		ctx.deductionsSumDia[0].text(ctx.deductionsSumDia[1].format(ctx.deductions[0].toFixed(2)));
 		ctx.netSumDia[0].text(ctx.netSumDia[1].format(ctx.takeHome.toFixed(2)));
 		
@@ -345,7 +363,9 @@ if (!String.prototype.format) {
 		$("label[for='checkbox-tax'] span.ui-btn-text").text(ctx.taxCheck[1].format((ctx.deductions[1] + ctx.deductions[2]).toFixed(2)));
 		$("label[for='checkbox-ei'] span.ui-btn-text").text(ctx.eiCheck[1].format((ctx.deductions[3] + ctx.deductions[4]).toFixed(2)));
 		$("label[for='checkbox-dues'] span.ui-btn-text").text(ctx.duesCheck[1].format(ctx.deductions[5].toFixed(2)));
-		
+		$("label[for='checkbox-monthly-dues'] span.ui-btn-text").text(ctx.monthlyDues[2].format(ctx.deductions[6].toFixed(2)));
+	    $("label[for='checkbox-travel-week'] span.ui-btn-text").text(ctx.weekTravel[2].format(ctx.weekTravel[0].toFixed(2)));
+	    $("label[for='checkbox-travel-day'] span.ui-btn-text").text(ctx.dayTravel[2].format((ctx.dayTravel[0] * ctx.travelDayCount).toFixed(2)));		
 	};
 	
 	ctx.settingsDialog = function() {

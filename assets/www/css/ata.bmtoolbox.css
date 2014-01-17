@@ -62,9 +62,25 @@
   width: 100%;
 }
 .deduct-inline .wrapper .content {
-  margin: 0 105px 0 105px;
+  margin: 0 105px 0 110px;
 }
 
+/* for custom day boxes*/
+.deduct-inline .wrapper .left-cont {
+  margin-left: 60px;
+  margin-right: 5px;
+  float:left;
+  width: 60px;
+}
+.deduct-inline .wrapper .cent-cont {
+  margin-right: 5px;
+  float:left;
+  width: 60px;
+}
+.deduct-inline .wrapper .right-cont {
+  float:left;
+  width: 60px;
+}
 
 .deduct-inline .left {
   float: left;
