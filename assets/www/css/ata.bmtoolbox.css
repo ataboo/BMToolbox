@@ -55,3 +55,36 @@
 	
 }
 */
+
+/*inline for custom values menu-------------------------*/
+.deduct-inline .wrapper {
+  float: left;
+  width: 100%;
+}
+.deduct-inline .wrapper .content {
+  margin: 0 105px 0 105px;
+}
+
+
+.deduct-inline .left {
+  float: left;
+  width: 105px;
+  margin-left:-100%;
+}
+
+.deduct-inline .text {
+  padding-top:0.7em;
+  padding-bottom:0.7em;
+  display: block;
+  font-size: 16px;  
+}
+.deduct-inline .right {
+  float: left;
+  width: 100px;
+  margin-left: -100px;
+}
+
+.deduct-inline .footer {
+  clear: left;  
+}
+

@@ -2,100 +2,197 @@
 <html lang="en">
   <head>
 	<meta charset="utf-8">
-	<title>Page Not Found</title>
+	<title>Wage Calculator</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/jquery.mobile-1.3.2.min.css">
 	<link rel="stylesheet" href="css/ata.bmtoolbox.css">
   </head>
   <body>
-	<div data-role="header" data-id="navbarlinker" data-position="fixed">
-	  <div data-role="navbar">
-		<ul>
-		  <li><a href="index.html">Index</a></li>
-		  <li><a href="wagecalc.html" class="ui-btn-active ui-state-persist">Wage Calculator</a></li>
-		  <li><a href="c.html">Unused</a></li>
-		</ul>
-	  </div><!-- /navbar -->
-	</div><!-- /header -->
-	
-	<!-- Wagecalc headers  -->
-	<div class="days-label-wrapper">
-	  <div>Sun</div>
-	  <div>Mon</div>
-	  <div>Tue</div>
-	  <div>Wed</div>
-      <div>Thu</div>
-	  <div>Fri</div>
-	  <div>Sat</div>
-	  <span class="stretcher"></span>
-	</div>
-	
-	<!-- Wagecalc selects  -->
-	<div class="center-wrapper">
-	  <div data-role="fieldcontain" class="days-fieldset">
-		<fieldset data-role="controlgroup" data-type="horizontal" class="centered-bar">
-		  <label for="sun-hours-select">Sunday Hours</label>
-		  <select data-mini="true" data-icon="false"
-			class="select-day" name="sun-hours-select" id="sun-hours-select">
+	<div data-role="page">
+	  <div data-role="header" data-id="navbarlinker" data-position="fixed">
+		<div data-role="navbar">
+		  <ul>
+			<li><a href="index.html">Index</a></li>
+			<li><a href="wagecalc.html" class="ui-btn-active ui-state-persist">Wage Calculator</a></li>
+			<li><a href="c.html">Unused</a></li>
+		  </ul>
+		</div><!-- /navbar -->
+	  </div><!-- /header -->
+
+	  <div data-role="content">
+		<!-- Wagecalc headers  -->
+		<div class="days-label-wrapper">
+		  <div>Sun</div>
+		  <div>Mon</div>
+		  <div>Tue</div>
+		  <div>Wed</div>
+		  <div>Thu</div>
+		  <div>Fri</div>
+		  <div>Sat</div>
+		  <span class="stretcher"></span>
+		</div>
+
+		<!-- Wagecalc selects  -->
+		<div class="center-wrapper">
+		  <div data-role="fieldcontain" class="days-fieldset">
+			<fieldset data-role="controlgroup" data-type="horizontal" class="centered-bar">
+			  <label for="sun-hours-select">Sunday Hours</label>
+			  <select data-mini="true" data-icon="false"
+				class="select-day" name="sun-hours-select" id="sun-hours-select">
+			  </select>
+			  <label for="mon-hours-select">Monday Hours</label>
+			  <select data-mini="true" data-icon="false"
+				class="select-day" name="mon-hours-select" id="mon-hours-select">
+			  </select>
+			  <label for="tue-hours-select">Tuesday Hours</label>
+			  <select data-mini="true" data-icon="false"
+				class="select-day" name="tue-hours-select" id="tue-hours-select">
+			  </select>
+			  <label for="wed-hours-select">Wednesday Hours</label>
+			  <select data-mini="true" data-icon="false"
+				class="select-day" name="wed-hours-select" id="wed-hours-select">
+			  </select>
+			  <label for="thu-hours-select">Thursday Hours</label>
+			  <select data-mini="true" data-icon="false"
+				class="select-day" name="thu-hours-select" id="thu-hours-select">
+			  </select>
+			  <label for="fri-hours-select">Friday Hours</label>
+			  <select data-mini="true" data-icon="false"
+				class="select-day" name="fri-hours-select" id="fri-hours-select">
+			  </select>
+			  <label for="sat-hours-select">Saturday Hours</label>
+			  <select data-mini="true" data-icon="false"
+				class="select-day" name="sat-hours-select" id="sat-hours-select">
+			  </select>
+			</fieldset>
+		  </div>
+		  <div id="hours-sum" class="text-dialogue">    1x: 0, 1.5x: 0 2x: 0, total: 0</div>
+		</div>
+		<hr>
+		<div class="checkbox-area">
+		  <h3>Wages:</h3>
+		  <select class="select-check" name="wage-select" id="wage-select">
 		  </select>
-		  <label for="mon-hours-select">Monday Hours</label>
-		  <select data-mini="true" data-icon="false"
-			class="select-day" name="mon-hours-select" id="mon-hours-select">
+		  <label><input type="checkbox" id="checkbox-fourtens" class="toggle-check"/>Four-Tens Schedule</label>
+		  <label for="checkbox-night"><input type="checkbox" id="checkbox-night" class="toggle-check"/>Nights = $0.00</label>
+		  <label><input type="checkbox" id="checkbox-travel-week" class="toggle-check"/>Travel (week) = $216.00</label>
+		  <label><input type="checkbox" id="checkbox-travel-day" class="toggle-check"/>Travel (day) = $25.00</label>
+		  <div class="title-dialogue" id="gross-sum-dialogue">    Taxable Gross: $0</div>
+		  <div class="title-dialogue" id="exempt-sum-dialogue">    Exempt Gross: $0</div>	
+		</div>
+		<hr>
+		<div class="checkbox-area">
+		  <h3>Deductions:</h3>
+		  <select data-mini="true" class="select-day" id="tax-select">
+			<option> Income Tax AB 2014 </option>
+			<option> Income Tax ON 2014 </option>
 		  </select>
-		  <label for="tue-hours-select">Tuesday Hours</label>
-		  <select data-mini="true" data-icon="false"
-			class="select-day" name="tue-hours-select" id="tue-hours-select">
-		  </select>
-		  <label for="wed-hours-select">Wednesday Hours</label>
-		  <select data-mini="true" data-icon="false"
-			class="select-day" name="wed-hours-select" id="wed-hours-select">
-		  </select>
-		  <label for="thu-hours-select">Thursday Hours</label>
-		  <select data-mini="true" data-icon="false"
-			class="select-day" name="thu-hours-select" id="thu-hours-select">
-		  </select>
-		  <label for="fri-hours-select">Friday Hours</label>
-		  <select data-mini="true" data-icon="false"
-			class="select-day" name="fri-hours-select" id="fri-hours-select">
-		  </select>
-		  <label for="sat-hours-select">Saturday Hours</label>
-		  <select data-mini="true" data-icon="false"
-			class="select-day" name="sat-hours-select" id="sat-hours-select">
-		  </select>
-		</fieldset>
-	  </div>
-		<div id="hours-sum" class="text-dialogue">    1x: 0, 1.5x: 0 2x: 0, total: 0</div>
-	</div>
-	<hr>
-	<div class="checkbox-area">
-		<h3>Wages:</h3>
-		<select class="select-check" name="wage-select" id="wage-select">
-		</select>
-	    <label><input type="checkbox" id="checkbox-fourtens" class="toggle-check"/>Four-Tens Schedule</label>
-		<label for="checkbox-night"><input type="checkbox" id="checkbox-night" class="toggle-check"/>Nights = $0.00</label>
-		<label><input type="checkbox" id="checkbox-travel-week" class="toggle-check"/>Travel (week) = $216.00</label>
-		<label><input type="checkbox" id="checkbox-travel-day" class="toggle-check"/>Travel (day) = $25.00</label>
-		<div class="title-dialogue" id="gross-sum-dialogue">    Taxable Gross: $0</div>
-		<div class="title-dialogue" id="exempt-sum-dialogue">    Exempt Gross: $0</div>	
-	</div>
-	<hr>
-	<div class="checkbox-area">
-		<h3>Deductions:</h3>
-	  <select data-mini="true" class="select-day" id="tax-select">
-	  	<option> Income Tax AB 2014 </option>
-		<option> Income Tax ON 2014 </option>
-	  </select>
-	  <label><input type="checkbox" id="checkbox-tax" class="toggle-check"/> Income Tax = $0.00 </label>
-	  <label><input type="checkbox" id="checkbox-ei" class="toggle-check"/> EI/CPP = $0.00</label>
-	  <label><input type="checkbox" id="checkbox-dues" class="toggle-check"/> Dues = $0.00</label>
-  		<div class="title-dialogue" id="deductions-dialogue">    Total Deductions: $0</div>
-		<h3 class="header-dialogue" id="takehome-dialogue">    Takehome: $0</h3>
-	</div>
-	<!-- call script method -->
-	<script type="text/javascript">
-		wageCalcBox.setupAndStart();
-	</script>
-	<link rel="stylesheet" href="css/ata.bmtoolbox.css">
+		  <label for="checkbox-tax"><input type="checkbox" id="checkbox-tax" class="toggle-check"/> Income Tax = $0.00 </label>
+		  <label for="checkbox-ei"><input type="checkbox" id="checkbox-ei" class="toggle-check"/> EI/CPP = $0.00</label>
+		  <label for="checkbox-dues"><input type="checkbox" id="checkbox-dues" class="toggle-check"/> Dues = $0.00</label>
+		  <div class="title-dialogue" id="deductions-dialogue">    Total Deductions: $0</div>
+		  <h3 class="header-dialogue" id="takehome-dialogue">    Takehome: $0</h3>
+		</div>
+
+		<div data-role="collapsible">  <!--Custom Values-->
+		  <h3>Change Values</h3>
+		  <p>Input rates and hit apply.</p>
+		  
+		  <div class="deduct-inline"> <!--Wage-->
+			<div class="wrapper">
+			  <div class="content">
+				<input data-mini="true" id="textbox-wage" name="textbox-wage" size="30" type="number" value="40"/>
+			  </div>
+			</div>
+			<div class="left text">
+			  Wage:
+			</div>
+			<div class="footer"></div>
+		  </div> <!--Wage -->
+		  
+		  <div class="deduct-inline">  <!--LOA-->
+			<div class="wrapper">
+			  <div class="content">
+				<input data-mini="true" id="textbox-loa" name="textbox-loa" size="30" type="number" value="195"/>
+			  </div>
+			</div>
+			<div class="left text">
+			  LOA Rate:
+			</div>
+			<div class="right">
+			  <label for="taxable-loa"><input type="checkbox" id="taxable-loa" data-mini="true"/>Taxable</label>			  
+			</div>
+			<div class="footer"></div>
+		  </div> <!--LOA-->
+		  
+		  <div class="deduct-inline">  <!--Weekly Travel-->
+			<div class="wrapper">
+			  <div class="content">
+				<input data-mini="true" id="textbox-weekly-travel" name="textbox-weekly-travel" size="30" type="number" value="220"/>
+			  </div>
+			</div>
+			<div class="left text">
+			  Travel (week):
+			</div>
+			<div class="right">
+			  <label for="taxable-weekly-travel"><input type="checkbox" id="taxable-weekly-travel" data-mini="true"/>Taxable</label>			  
+			</div>
+			<div class="footer"></div>
+		  </div> <!--Weekly Travel-->
+		  
+		  <div class="deduct-inline">  <!--Daily Travel-->
+			<div class="wrapper">
+			  <div class="content">
+				<input data-mini="true" id="textbox-daily-travel" name="textbox-daily-travel" size="30" type="number" value="20"/>
+			  </div>
+			</div>
+			<div class="left text">
+			  Travel (day):
+			</div>
+			<div class="right">
+			  <label for="taxable-daily-travel"><input type="checkbox" id="taxable-daily-travel" data-mini="true"/>Taxable</label>			  
+			</div>
+			<div class="footer"></div>
+		  </div> <!--Daily Travel-->
+		  
+		  <div class="deduct-inline">  <!--Add Tax-->
+			<div class="wrapper">
+			  <div class="content">
+				<input data-mini="true" id="textbox-addtax" name="textbox-addtax" size="30" type="number" value="0" />
+			  </div>
+			</div>
+			<div class="left text">
+			  Add Tax:
+			</div>
+			<div class="footer"></div>
+		  </div> <!--Add Tax-->
+		  
+		</div>  <!--Custom Values-->
+		<div data-role="collapsible">
+		  <h3>Custom Days</h3>
+		  <p>Enter a day to use up top as "Single,OT,Double" ex: "8.5,2,1.5"</p>
+		  <div data-role="fieldcontain">
+			<label for="custom-dayA">Custom Day A Hrs "1x, 1.5x, 2x"</label>
+			<input type="number" name="custom-dayA" id="custom-dayA" value=""  />
+		  </div>
+		  <div data-role="fieldcontain">
+			<label for="custom-dayB">Custom Day B Hrs "1x, 1.5x, 2x"</label>
+			<input type="number" name="custom-dayB" id="custom-dayB" value=""  />
+		  </div>
+		  <div data-role="fieldcontain">
+			<label for="custom-dayC">Custom Day C Hrs "1x, 1.5x, 2x"</label>
+			<input type="number" name="custom-dayC" id="custom-dayC" value=""  />
+		  </div>
+		</div>  <!--custom days-->
+
+
+
+
+	  </div>   <!--content-->
+<script type="text/javascript">
+wageCalcBox.setupAndStart();
+</script>
+	</div> <!-- page -->
   </body>
 </html>
 

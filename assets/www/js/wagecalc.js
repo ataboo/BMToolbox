@@ -1,5 +1,6 @@
 var wageCalcBox = {};
 
+// Format function from stack overflow example
 // First, checks if it isn't implemented yet.
 if (!String.prototype.format) {
   String.prototype.format = function() {
@@ -18,6 +19,52 @@ if (!String.prototype.format) {
 //setup and populate
 (function(ctx) {
 	ctx.setupAndStart = function() {
+		//Constants
+		ctx.FIVE_WEEKDAY = 0;  //five eights
+		ctx.FIVE_WEEKEND = 1;  //shared
+		ctx.FOUR_WEEKDAY = 2;  //four tens
+		ctx.FOUR_FRIDAY = 3;  //four tens
+		
+		ctx.wageOptions = [
+			["Helper", 31.25],
+			["1st Year", 24.46], 
+			["2nd Year", 31.25],
+			["3rd Year", 38.05],
+			["Journeyman (S)", 41.83],
+			["Journeyman (N)", 42.58],
+			["Lead Hand", 45.73],
+			["Foreman", 48.08],
+			["GF", 50.08]];
+
+		ctx.dayOptions = [
+			["0", 0],
+	 		["8", 8],
+			["10", 10],
+			["12", 12],
+			["13", 13],
+			["A", -1],
+			["B", -2],
+			["C", -3]];
+		
+		//2014 tax year-------------------------------
+		ctx.fedTaxTable2014 = [
+			[0, 43953, 87907, 136370],  //brackets
+			[0.15, 0.22, 0.26, 0.29],  //rates
+			[0, 3077, 6593, 10681],  //fed constant (k from table)
+			[2340.63, 2425.50, 913.68, 11138, 1127]   //Fed tax credits [sum * 0.15, cpp max, ei max, TD1 default, employment credit]
+		];
+		ctx.abTaxTable2014 = [
+			[], //brackets
+			[.10],  //rate
+			[2112.62, 2425.5, 913.68, 17787]  //AB tax credits [sum * %10, cpp max, ei max, AB1 amount]
+		];
+		ctx.cppEiDuesRates = [
+			0.0495,  //cpp
+			0.0188,  //ei
+			0.0375  //dues
+		];
+		//--------------------------------------------
+
 		//Selects
 		ctx.wageSel = $("#wage-select");
 		ctx.sunSel = $("#sun-hours-select");
@@ -43,33 +90,18 @@ if (!String.prototype.format) {
 		ctx.nightsCheck = [$("#checkbox-night"), "Nights = ${0}"];
 		ctx.weekTravelCheck = $("#checkbox-travel-week");
 		ctx.dayTravelCheck = $("#checkbox-travel-day");
-		ctx.taxCheck = $("#checkbox-tax");
-		ctx.eiCheck = $("#checkbox-ei");
-		ctx.duesCheck = $("#checkbox-dues");
+		ctx.taxCheck = [$("#checkbox-tax"), "Income Tax = ${0}"];
+		ctx.eiCheck = [$("#checkbox-ei"), "EI/CPP = ${0}"];
+		ctx.duesCheck = [$("#checkbox-dues"), "Union Dues = ${0}"];
 		ctx.toggleClass = $(".toggle-check");
 		ctx.startChecked = $(".start-checked");
-
+		ctx.settingsButton = $("#settings-button");
+		
 		ctx.populateSelects();
 		ctx.setClickListeners();
 	};
 
-	ctx.populateSelects = function() {
-		ctx.wageOptions = [
-			["1st Year", 20], 
-			["2nd Year", 30],
-			["3rd Year", 35],
-			["Journeyman", 41],
-			["Lead Hand", 44],
-			["Foreman", 47],
-			["GF", 49]];
-
-		ctx.dayOptions = [
-			["0", 0],
-	 		["8", 8],
-			["10", 10],
-			["12", 12],
-			["13", 13]];
-
+	ctx.populateSelects = function() {				
 		for (var i = 0; i < ctx.wageOptions.length; i++)
 		{
 			var wageString = ctx.wageOptions[i][0] + ":  $" + ctx.wageOptions[i][1].toString();
@@ -105,6 +137,10 @@ if (!String.prototype.format) {
 		$(document.body).on("change", "select", function() {
 			ctx.updateCalc();
 		});
+		
+		ctx.settingsButton.bind('click', function() {
+			ctx.settingsDialog();
+		});
 
 	};
 
@@ -113,9 +149,9 @@ if (!String.prototype.format) {
 		ctx.wageSel.val(ctx.defaultWageVal).selectmenu('refresh');
 		
 		//I hate your face jQuery
-		$("#checkbox-tax").prop("checked", true).checkboxradio('refresh');
-		$("#checkbox-ei").prop("checked", true).checkboxradio('refresh');
-		$("#checkbox-dues").prop("checked", true).checkboxradio('refresh');
+		ctx.taxCheck[0].prop("checked", true).checkboxradio('refresh');
+		ctx.eiCheck[0].prop("checked", true).checkboxradio('refresh');
+		ctx.duesCheck[0].prop("checked", true).checkboxradio('refresh');
 	};
 
 	//--------------------Update-------------------------
@@ -131,98 +167,205 @@ if (!String.prototype.format) {
 	ctx.calcPay = function() {
 		ctx.hrsWorked = 0;
 		ctx.hrsArr = [0,0,0];
+		ctx.weekHrs = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+		ctx.deductions = [0,0,0,0,0,0];  //sum, fedtax, provtax, cpp, ei, dues 
+		ctx.taxExempt = [0,0,0]; //sum, travel, loa
+		ctx.nightPrem = 0;
+		ctx.isFourTens = ctx.fourtensCheck.prop('checked');
+		ctx.travelDays = 0;
 		
-		$.each(ctx.weekArr, function(i, e) {
-			ctx.hrsWorked += parseFloat(e.val());
-		});
+		for(var i = 0; i < ctx.weekArr.length; i++) {
+			var dayArr = [0,0,0];
+			var parsed = parseFloat(ctx.weekArr[i].val());
+			if(parsed < 0) {  //custom days
+				var customIndex = 0;
+				switch (parsed) {
+					case -1:  //custom A
+						customIndex = 0;
+						break;
+					case -2:  //custom B
+						customIndex = 1;
+						break;
+					case -3:  //custom C
+						customIndex = 2;
+						break;
+				}
+				//ctx.weekHrs[i] = blahblah[index];
+				
+				//don't forget hrsworked
+			} else {
+				ctx.hrsWorked += parsed;
+				if(i == 0 || i == 6) {  //Sun || Sat
+					dayArr = ctx.hrsSum(ctx.FIVE_WEEKEND, parsed);
+				} else {
+					if(!ctx.isFourTens) {  //FiveEights weekday
+						dayArr = ctx.hrsSum(ctx.FIVE_WEEKDAY, parsed);
+					} else {
+						if(i == 5) {  //FourTens Friday
+							dayArr = ctx.hrsSum(ctx.FOUR_FRIDAY, parsed);
+						} else {  //FourTens weekday
+							dayArr = ctx.hrsSum(ctx.FOUR_WEEKDAY, parsed);
+						}
+					}
+				}
+			}
+			ctx.weekHrs[i] = dayArr;
+			ctx.hrsArr[0] += dayArr[0];
+			ctx.hrsArr[1] += dayArr[1];
+			ctx.hrsArr[2] += dayArr[2];
+		} //weekdays forloop
+		
 		ctx.wageVal = parseFloat(ctx.wageSel.val());
-		if(ctx.fourtensCheck.prop('checked')) {
-			ctx.hrsArr = ctx.hrsSumFourTens(ctx.weekArr);
-		} else {
-			ctx.hrsArr = ctx.hrsSum(ctx.weekArr);
-		}
+		//todo custom wage
+		
 		ctx.grossPay = ctx.hrsArr[2] * ctx.wageVal * 2 +
 			ctx.hrsArr[1] * ctx.wageVal * 1.5 +
 			ctx.hrsArr[0] * ctx.wageVal;
-		if(ctx.nightsCheck[0].prop("checked")){
-			ctx.grossPay += 3 * ctx.hrsWorked;
+		if(ctx.nightsCheck[0].prop("checked")){  //Nightshift premium $3/hr
+			ctx.nightPrem = 3 * ctx.hrsWorked;
 		}
+		ctx.grossPay += ctx.nightPrem;
+		ctx.grossNoVac = ctx.grossPay;
+		ctx.grossPay *= (1 + 0.1);  //vacation pay @ %10 
 		
+		ctx.deductions[1] = ctx.taxFed(ctx.grossPay);
+		ctx.deductions[2] = ctx.taxAB(ctx.grossPay);  //Todo: province select
+		var cppEiDuesArr = ctx.cppEiDues(ctx.grossPay, ctx.grossNoVac);
+		
+		ctx.deductions[3] = cppEiDuesArr[0];
+		ctx.deductions[4] = cppEiDuesArr[1];
+		ctx.deductions[5] = cppEiDuesArr[2];
+		
+		//Todo: Tax exempt
+		
+		ctx.deductions[1] = (ctx.taxCheck[0].prop('checked')) ? ctx.deductions[1] : 0;
+		ctx.deductions[2] = (ctx.taxCheck[0].prop('checked')) ? ctx.deductions[2] : 0;
+		ctx.deductions[3] = (ctx.eiCheck[0].prop('checked')) ? ctx.deductions[3] : 0;
+		ctx.deductions[4] = (ctx.eiCheck[0].prop('checked')) ? ctx.deductions[4] : 0;
+		ctx.deductions[5] = (ctx.duesCheck[0].prop('checked')) ? ctx.deductions[5] : 0;
+		
+		
+		
+		for(var i = 1; i < ctx.deductions.length ; i++){  //get sum of deductions non zeroed
+			ctx.deductions[0] += ctx.deductions[i];
+		}
+		ctx.takeHome = ctx.grossPay - ctx.deductions[0];
 		
 		
 	};
 	
-	ctx.hrsSum = function(weekArr){  //Five Eights
+	ctx.hrsSum = function(dayType, hrs){  //Splits for default contract days
 		var retArr = [0,0,0];
-		for(var i = 1; i < 6; i++) { //weekdays
-			dayHrs = parseFloat(weekArr[i].val());
-			//2x time after 10
-			if(dayHrs > 10) {
-				retArr[2] += (dayHrs - 10);
-				dayHrs -= retArr[2];
-			}
-			//1.5x time after 8
-			if(dayHrs > 8) {
-				retArr[1] += (dayHrs - 8);
-				dayHrs -= retArr[1];
-			}
-			//rest 1x time
-			retArr[0] += dayHrs;
-		}
 		
-		for(var i = 0; i < 7; i+=6) { //weekends
-			dayHrs = parseFloat(weekArr[i].val());
-			//All 2x on weekends
-			retArr[2] += dayHrs;
-		}
+		var remTwelve = (hrs - 10 > 0) ? hrs - 10 : 0;
+		var remTen = (hrs - 8 - remTwelve > 0) ? hrs - 8 - remTwelve : 0;
+		var remEight = hrs - remTwelve - remTen;
 		
+		switch(dayType) {
+			case ctx.FIVE_WEEKDAY:
+				retArr[2] = remTwelve;
+				retArr[1] = remTen;
+				retArr[0] = remEight;
+				break;
+			case ctx.FIVE_WEEKEND:
+				retArr[2] = hrs;
+				break;
+			case ctx.FOUR_WEEKDAY:
+				retArr[0] = remTen + remEight;
+				retArr[2] = remTwelve;
+				break;
+			case ctx.FOUR_FRIDAY:
+				retArr[1] = remTen + remEight;
+				retArr[2] = remTwelve;
+				break;
+			default:  //incase of fail call
+				return [0,0,0];
+		}
 		return retArr;
 	};
 	
-	ctx.hrsSumFourTens = function(weekArr) {  //FourTens
-		retArr = [0,0,0];
-		for(var i = 1; i < 6; i++) {  //Monday to Thurday
-			dayHrs = parseFloat(weekArr[i].val());
-			//2x time after 10
-			if(dayHrs > 10) {
-				retArr[2] += (dayHrs - 10);
-				dayHrs -= retArr[2];
-			}
-
-			if(i == 5) { //1.5x time on fridays
-				retArr[1] += dayHrs;
-			} else { //rest 1x time
-				retArr[0] += dayHrs;
+	//Canadian Federal Tax
+	ctx.taxFed = function(gross) {
+		var anGross = gross * 52;
+		var fedTax = 0;
+		var bracket = ctx.fedTaxTable2014[0];
+		var rate = ctx.fedTaxTable2014[1];
+		var fedConst = ctx.fedTaxTable2014[2];
+		var fedTaxCred = ctx.fedTaxTable2014[3][0];
+		
+		if(anGross < bracket[1]) {
+			fedTax = anGross * rate[0] - fedConst[0] - fedTaxCred;
+		} else {
+			if(anGross < bracket[2]) {
+				fedTax = anGross * rate[1] - fedConst[1] - fedTaxCred;
+			} else {
+				if(anGross < bracket[3]) {
+					fedTax = anGross * rate[2] - fedConst[2] - fedTaxCred;	
+				} else {
+					//if(anGross >= bracket[3])
+					fedTax = anGross * rate[3] - fedConst[3] - fedTaxCred;			
+				}
 			}
 		}
-		
-		for(i = 0; i < 7; i+=6) { //Weekends
-			dayHrs = parseFloat(weekArr[i].val());
-			//All 2x on weekends
-			retArr[2] += dayHrs;
-		}
-	
-		return retArr;
+		return (fedTax>0) ? fedTax/52 : 0;
 	};
 	
-	ctx.taxFed = function() {
-		
+	//Alberta Provincial tax
+	ctx.taxAB = function(gross) {
+		abRate = ctx.abTaxTable2014[1][0];
+		abTaxCred = ctx.abTaxTable2014[2][0];
+		abTax = (gross * 52 * abRate - abTaxCred) / 52;  //wow, such simple
+		return (abTax>0) ? abTax : 0;
 	};
 	
-	ctx.taxAB = function() {
-		
-	};
-	
+	//Ontario Provincial tax
 	ctx.taxON = function() {
 		
+	};
+	
+	ctx.cppEiDues = function(gross, grossNoVac) {
+		retArr = [0,0,0];
+		rates = ctx.cppEiDuesRates;
+		anGross = gross * 52;
+		retArr[0] = (anGross - 3500) / 52 * rates[0];
+		retArr[1] = gross * rates[1];
+		retArr[2] = grossNoVac * rates[2];  //dues
+		retArr[0] = (retArr[0]>0) ? retArr[0] : 0; //zeros negative vals for cpp
+		return retArr;
 	};
 	
 	ctx.updateText = function() {
 		//[$("#hours-sum"), "  Hours:  1x: 0  1.5x: 0  2x: 0"];
 		ctx.hoursSumDia[0].text(ctx.hoursSumDia[1].format(ctx.hrsArr[0], ctx.hrsArr[1], ctx.hrsArr[2]));
-		ctx.grossSumDia[0].text(ctx.grossSumDia[1].format(ctx.grossPay));
-		$("label[for='checkbox-night'] span.ui-btn-text").text(ctx.nightsCheck[1].format(ctx.hrsWorked * 3));
-		//ctx.nightsCheck[0].next('label').text(ctx.nightsCheck[1].format(ctx.hrsWorked * 3));
+		ctx.grossSumDia[0].text(ctx.grossSumDia[1].format(ctx.grossPay.toFixed(2)));
+		ctx.deductionsSumDia[0].text(ctx.deductionsSumDia[1].format(ctx.deductions[0].toFixed(2)));
+		ctx.netSumDia[0].text(ctx.netSumDia[1].format(ctx.takeHome.toFixed(2)));
+		
+		$("label[for='checkbox-night'] span.ui-btn-text").text(ctx.nightsCheck[1].format(ctx.nightPrem));
+		$("label[for='checkbox-tax'] span.ui-btn-text").text(ctx.taxCheck[1].format((ctx.deductions[1] + ctx.deductions[2]).toFixed(2)));
+		$("label[for='checkbox-ei'] span.ui-btn-text").text(ctx.eiCheck[1].format((ctx.deductions[3] + ctx.deductions[4]).toFixed(2)));
+		$("label[for='checkbox-dues'] span.ui-btn-text").text(ctx.duesCheck[1].format(ctx.deductions[5].toFixed(2)));
+		
+	};
+	
+	ctx.settingsDialog = function() {
+		/*
+		$("#settingtown").dialog({
+    		modal: true,
+    		draggable: false,
+    		resizable: false,
+    		position: ['center', 'top'],
+    		show: 'blind',
+    		hide: 'blind',
+    		width: 400,
+    		dialogClass: 'ui-dialog-osx',
+    		buttons: {
+        		"I've read and understand this": function() {
+            		$(this).dialog("close");
+        		}
+    		}
+		});
+		*/
 	};
 
 })(wageCalcBox);
