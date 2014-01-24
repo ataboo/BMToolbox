@@ -528,7 +528,7 @@ if (!String.prototype.format)
 
 })(wageCalcBox);
 
-$(document).bind('pageinit',function(){
+$("#wage-page").bind('pageinit',  function(){
     wageCalcBox.setupAndStart();
 	console.log("ran page init");
 });

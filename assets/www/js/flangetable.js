@@ -82,7 +82,14 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 	};
 	
 	context.updateSendButton = function () {
-
+		return;
+		
+		if(typeof(context.rateSel[0].selectedIndex) === 'undefined' ||
+		typeof(context,studSel[0].selectedIndex) === 'undefined') { 
+			console.log("shit is all undefined");
+			return;
+		}
+		
 		if(context.rateSel[0].selectedIndex > 0 && context.sizeSel[0].selectedIndex > 0) {
 			context.sendBut.button("enable");
 		} else {
@@ -106,7 +113,7 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 	};
 	
 	context.displayStud = function(studStats){
-		studSize = context.studSize;
+		var studSize = context.studSize;
 		studString = ("Stud Size: " + studSize + "\"");
 		toolString = ("Wrench: " + studStats[0] + "\",   Drift Pin: " + studStats[1] + "\"");
 		torqueString = ("B7 Torque: " + studStats[3] + " ft-lbs \nB7M Torque: " + studStats[2] + " ft-lbs");
@@ -189,9 +196,8 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 	
 })(flangeBox);
 
-//going to make the last module added call the load functions on each.
-$(document).ready(function(){
-	flangeBox.startLoad();	
+$("#flange-page").bind('pageinit', function(){
+    flangeBox.startLoad();
 });
 
 			
