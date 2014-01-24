@@ -98,21 +98,15 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 		context.studBut.button("refresh");
 	};
 	
-	context.calcStud = function () {
-		studString = context.studSel[0].val();	
-		//console.log("studString: " + studString);
-		context.studStats = context.studStatsOrdered[studString];
-		context.displayStud();
+	context.calcStud = function () {  //called by stud only button 
+		context.studSize = context.studSel.val().replace('"', '');
+		context.studStats = context.getStudStats(context.studSize);
+		console.log("studSize is: " + context.studSize + ", studStats are: " + context.studStats); 
+		context.displayStud(context.studStats);
 	};
 	
-	context.getStudStatsOrdered = function(studString) {
-		//console.log(context.studStats);
-		return context.studStatsOrdered[studString][0];
-	};
-	
-	context.displayStud = function(){
-		studStats = context.studStats;
-		studSize = context.studSel.val();
+	context.displayStud = function(studStats){
+		studSize = context.studSize;
 		studString = ("Stud Size: " + studSize + "\"");
 		toolString = ("Wrench: " + studStats[0] + "\",   Drift Pin: " + studStats[1] + "\"");
 		torqueString = ("B7 Torque: " + studStats[3] + " ft-lbs \nB7M Torque: " + studStats[2] + " ft-lbs");
@@ -171,6 +165,7 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 				console.log("got stud: " + value);
 				retVal = value;
 			}
+			console.log("Checking: " + studSize + " against: " + i + " getting: " + (studSize == i));
 		});
 		
 		return retVal;
