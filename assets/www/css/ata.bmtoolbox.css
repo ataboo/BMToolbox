@@ -1,6 +1,10 @@
 .center-wrapper{
-    margin-left: 5%;
-    margin-right: 5%;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.flange-wrapper{
+  margin: 0 10px 0 10px;
 }
 
 .days-fieldset .ui-controlgroup-controls {
@@ -14,7 +18,7 @@
 }
 
 .days-label-wrapper {
-    width:78%;
+    width:82%;
     height: 10px;
     margin:0 auto;
     text-align: justify;
@@ -102,5 +106,47 @@
 
 .deduct-inline .footer {
   clear: left;  
+}
+
+/*for apply button in collapsibles-----------------*/
+.apply-inline .text {
+  float: left;
+}
+
+.apply-inline .right {
+  float: right;
+}
+
+.apply-inline .footer {
+  clear: left;
+}
+
+/*preset buttons--------------*/
+.preset-inline .wrapper {
+  float: left;
+  width: 98%;
+  margin: auto;
+}
+
+.preset-inline .preset-but {
+  float: left;
+  width: 85px;
+  margin-left:5px;
+}
+
+/* loa inline -----------------------*/
+.loa-inline .wrapper{
+  float: left;
+  width: 100%;
+}
+
+.loa-inline .left {
+  float: left;
+  margin: 0 5px 0 5px;
+  width: 100px;
+}
+
+.loa-inline .footer {
+  clear: left;
 }
 

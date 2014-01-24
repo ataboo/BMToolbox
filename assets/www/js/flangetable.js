@@ -99,15 +99,15 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 	};
 	
 	context.calcStud = function () {
-		studVal = context.studSel[0].selectedIndex;	
-		console.log("studval: " + studVal);
-		context.getStudStatsOrdered(studVal - 1);
+		studString = context.studSel[0].val();	
+		//console.log("studString: " + studString);
+		context.studStats = context.studStatsOrdered[studString];
 		context.displayStud();
 	};
 	
-	context.getStudStatsOrdered = function(studSize) {
-		context.studStats = context.studStatsOrdered[studSize][0];
-		console.log(context.studStats);
+	context.getStudStatsOrdered = function(studString) {
+		//console.log(context.studStats);
+		return context.studStatsOrdered[studString][0];
 	};
 	
 	context.displayStud = function(){
@@ -128,66 +128,61 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 		sSize = context.sizeSel;
 		sRate = context.rateSel;
 	
-		rateInd = sRate[0].selectedIndex;
+		rateInd = sRate[0].selectedIndex;  //flange rating select index
 		context.rateVal = sRate.val();
-		context.sizeVal = sizeVal = $(sSize).val();
+		context.sizeVal = sizeVal = $(sSize).val();  //might not make global
 		
 		//Inside the $.each() callback above, you would do $.each(this.subaction, function() { alert(this.name); });, that would give you A, B, C, etc. - test it out here:
-		var fStats;
-		switch(rateInd) {
-			case 0:
-				fStats = context.data.fStats150;
-				break;
-	        case 1:
-				fStats = context.data.fStats300;
-				break;
-			case 2:
-				fStats = context.data.fStats400;
-				break;
-		    case 3:
-				fStats = context.data.fStats600;
-				break;
-		    case 4:
-				fStats = context.data.fStats900;
-				break;
-			case 5:
-				fStats = context.data.fStats1500;
-				break;
-		}	
-		context.getFStats(fStats, sizeVal);
+			
+		context.flangeStats = context.getFStats(rateInd, sizeVal);
+		//console.log("flange stats is defined and [0] is: " + context.flangeStats[0]);
+		context.studStats = context.getStudStats(context.flangeStats[0]);
+		//console.log("studStats is: " + context.studStats);
+		context.displayFlange(context.flangeStats, context.studStats);
 	};
 	
-	context.getFStats = function (data, sizeVal){
-		$.each(data, function(i, value){
-			console.log("checked: " + i);
-			if(i === sizeVal) {
-				console.log("got: " + value);
-				context.flangeStats = value;
+	context.getFStats = function (rateIndex, sizeVal){
+		var fStatArr = [
+			0,  //First index in <select> is "rate" label
+			context.data.fStats150,
+			context.data.fStats300,
+			context.data.fStats400,
+			context.data.fStats600,
+			context.data.fStats900,
+			context.data.fStats1500
+		];
+		
+		fStats = fStatArr[rateIndex];
+		var statString = [];
+		$.each(fStats, function(i, value){
+			console.log("checked: " + i + " against: " + sizeVal);
+			if(i == sizeVal) {
+				console.log("getFstats returned: " + value);
+				statString = value;
 			}
 		});
-		context.getStudStats(context.flangeStats[0]);
-		
-		context.displayFlange();
+		return statString;
 	};
 	
 	context.getStudStats = function (studSize){
+		var retVal = [];
 		$.each(context.data.studSizes, function(i, value) {
 			if(i === studSize) {
 				console.log("got stud: " + value);
-				context.studStats = value;
+				retVal = value;
 			}
 		});
+		
+		return retVal;
 		//console.log("Should still be: " + context.torqueStats);
 	};
 	
-	context.displayFlange = function() {
+	context.displayFlange = function(flangeStats, studStats) {
 	//studStats = studSize: [wrench size, drift pin, b7m torque, b7 torque]
 	//flangeStats = flangeSize: [studSize, studIndex, studCount, studLength] 
-	flangeStats = context.flangeStats;
-	studStats = context.studStats;
 	
 	flangeString = ("Flange Size: " + context.sizeVal + "\": " + context.rateVal + "#");
-	studString = ("Studs: " + flangeStats[2] + " @ " + flangeStats[0] + "\" x " + flangeStats[2] + "\"");
+	studString = ("Studs: " + flangeStats[2] + " @ " + flangeStats[0] + "\" x " + flangeStats[3] + "\"");
 	toolString = ("Wrench: " + studStats[0] + "\",   Drift Pin: " + studStats[1] + "\"");
 	torqueString = ("B7 Torque: " + studStats[3] + " ft-lbs \nB7M Torque: " + studStats[2] + " ft-lbs");
 	

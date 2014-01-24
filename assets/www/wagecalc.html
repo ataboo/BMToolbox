@@ -6,9 +6,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="css/jquery.mobile-1.3.2.min.css">
 	<link rel="stylesheet" href="css/ata.bmtoolbox.css">
+	  <script>
+	  if(typeof jQuery == 'undefined') {
+		document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>');
+	    document.write('<script src="js/vendor/jquery.mobile-1.3.2.min.js"><\/script>');
+	    document.write('<script src="js/vendor/fastclick.js"><\/script>');
+	    document.write('<script src="js/plugins.js"><\/script>');};
+    </script>  
   </head>
   <body>
-	<div data-role="page">
+	<div data-role="page" id="wage-page">
+	  <script src="js/wagecalc.js"></script>
 	  <div data-role="header" data-id="navbarlinker" data-position="fixed">
 		<div data-role="navbar">
 		  <ul>
@@ -69,10 +77,39 @@
 		  <div id="hours-sum" class="text-dialogue">    1x: 0, 1.5x: 0 2x: 0, total: 0</div>
 		</div>
 		<hr>
+		  
+		<div class="preset-inline">
+		  <div class="wrapper">
+			<div class="preset-but">
+			  <input type="button" id="preset-clear" value="Clear"/>			  
+			</div>
+			<div class="preset-but">
+			  <input type="button" id="preset-tens" value="10s"/>			  
+			</div>  
+			<div class="preset-but">
+		      <input type="button" id="preset-twelves" value="12s"/>			  
+			</div>
+		  </div>
+		  
+		</div>
 		<div class="checkbox-area">
 		  <h3>Wages:</h3>
-		  <select class="select-check" name="wage-select" id="wage-select">
-		  </select>
+		  <select class="select-check" name="wage-select" id="wage-select"></select>
+		  
+		  <div class="loa-inline">
+		    <div class="wrapper">
+			  <div class="left">
+			    <label for="loa-select">LOA Days:</label>
+				<select data-mini="true" name="loa-select" id="loa-select"></select>
+		      </div>
+			  <div class="left">
+				<label for="meal-select">Meal Days:</label>
+				<select data-mini="true" name="meal-select" id="meal-select"></select>
+		      </div>
+			</div>
+			<div class="footer"></div>
+		  </div>  <!--LOA inline -->
+		  
 		  <label><input type="checkbox" id="checkbox-fourtens" class="toggle-check"/>Four-Tens Schedule</label>
 		  <label for="checkbox-night"><input type="checkbox" id="checkbox-night" class="toggle-check"/>Nights = $0.00</label>
 		  <label for="checkbox-travel-week"><input type="checkbox" id="checkbox-travel-week" class="toggle-check"/>Travel (week) = $216.00</label>
@@ -97,8 +134,14 @@
 
 		<div data-role="collapsible">  <!--Custom Values-->
 		  <h3>Change Values</h3>
-		  <p>Input rates and hit apply.</p>
-		  
+		  <div class="apply-inline"> <!--Apply Header-->
+			<p class="text">Change values and hit save.</p>
+			<div class="right">
+			  <input type="button" id="apply-button" data-icon="check" value="Save" data-inline="true"/>			  
+			</div>
+			<div class="footer"/>
+		  </div>
+		  <hr>
 		  <div class="deduct-inline"> <!--Wage-->
 			<div class="wrapper">
 			  <div class="content">
@@ -110,7 +153,7 @@
 			</div>
 			<div class="footer"></div>
 		  </div> <!--Wage -->
-		  
+
 		  <div class="deduct-inline">  <!--LOA-->
 			<div class="wrapper">
 			  <div class="content">
@@ -120,11 +163,19 @@
 			<div class="left text">
 			  LOA Rate:
 			</div>
-			<div class="right">
-			  <label for="taxable-loa"><input type="checkbox" id="taxable-loa" data-mini="true"/>Taxable</label>			  
-			</div>
 			<div class="footer"></div>
 		  </div> <!--LOA-->
+		  <div class="deduct-inline">  <!--Meals-->
+			<div class="wrapper">
+			  <div class="content">
+				<input data-mini="true" id="textbox-meal" name="textbox-meal" size="30" type="number" value="40"/>
+			  </div>
+			</div>
+			<div class="left text">
+			  Meal Rate:
+			</div>
+			<div class="footer"></div>
+		  </div> <!--Meals-->
 		  
 		  <div class="deduct-inline">  <!--Weekly Travel-->
 			<div class="wrapper">
@@ -140,7 +191,7 @@
 			</div>
 			<div class="footer"></div>
 		  </div> <!--Weekly Travel-->
-		  
+
 		  <div class="deduct-inline">  <!--Daily Travel-->
 			<div class="wrapper">
 			  <div class="content">
@@ -155,7 +206,7 @@
 			</div>
 			<div class="footer"></div>
 		  </div> <!--Daily Travel-->
-		  
+
 		  <div class="deduct-inline">  <!--Monthly Dues-->
 			<div class="wrapper">
 			  <div class="content">
@@ -167,8 +218,8 @@
 			</div>
 			<div class="footer"></div>
 		  </div> <!--Monthly Dues-->
-		  
-		  
+
+
 		  <div class="deduct-inline">  <!--Add Tax-->
 			<div class="wrapper">
 			  <div class="content">
@@ -180,11 +231,8 @@
 			</div>
 			<div class="footer"></div>
 		  </div> <!--Add Tax-->
-		  
-		</div>  <!--Custom Values-->
-		<div data-role="collapsible">  <!--Custom Days-->
-		  <h3>Custom Days</h3>
-		  <p>Enter a day to use up top (1x, 1.5x, 2x)</p>
+		  <hr>
+		  <p>Enter custom days A, B, and C (1x, 1.5x, 2x)</p>
 		  <div class="deduct-inline">  <!--Day A-->
 			<div class="wrapper">
 			  <div class="left-cont">
@@ -236,16 +284,13 @@
 			</div>
 			<div class="footer"></div>
 		  </div> <!--Day C-->
-		  
-		</div>  <!--custom days-->
+
+		</div>  <!--custom values-->
 
 
 
 
 	  </div>   <!--content-->
-<script type="text/javascript">
-wageCalcBox.setupAndStart();
-</script>
 	</div> <!-- page -->
   </body>
 </html>
