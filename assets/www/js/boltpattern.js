@@ -90,7 +90,7 @@ if(typeof String.prototype.repeat != 'function') {
 	
 	ctx.genSequence = function(studCount, type){
 		//switch-case if needed later
-		seqOut = "";
+		seqOut = "Pattern: &nbsp";
 		var factor = 0;
 		var basePat = [];
 		
@@ -106,7 +106,6 @@ if(typeof String.prototype.repeat != 'function') {
 		
 		for(var i=0; i < basePat.length; i++){
 			for(var j=basePat[i]; j < studCount + 1; j+=factor){
-				//TODO add bolding on basePat Numbers will change to HTML
 				if(j !== 1){
 					seqOut += ", ";
 					if(j == basePat[i]) {

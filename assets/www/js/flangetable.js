@@ -82,13 +82,13 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 	};
 	
 	context.updateSendButton = function () {
-		return;
-		
+		/*
 		if(typeof(context.rateSel[0].selectedIndex) === 'undefined' ||
 		typeof(context,studSel[0].selectedIndex) === 'undefined') { 
 			console.log("shit is all undefined");
 			return;
 		}
+		*/
 		
 		if(context.rateSel[0].selectedIndex > 0 && context.sizeSel[0].selectedIndex > 0) {
 			context.sendBut.button("enable");
@@ -197,7 +197,8 @@ var flangeBox = {};  //Used for context to coordinate between the functions.
 })(flangeBox);
 
 $("#flange-page").bind('pageinit', function(){
-    flangeBox.startLoad();
+    console.log("triggered flange load");
+	flangeBox.startLoad();
 });
 
 			
