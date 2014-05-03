@@ -27,15 +27,15 @@ if (!String.prototype.format)
 		ctx.FOUR_FRIDAY = 3;  //four tens
 
 		ctx.wageOptions = [
-			["Helper", 31.25],
-			["1st Year", 24.46], 
-			["2nd Year", 31.25],
-			["3rd Year", 38.05],
-			["Journeyman (S)", 41.83],
-			["Journeyman (N)", 42.58],
-			["Lead Hand", 45.73],
-			["Foreman", 48.08],
-			["GF", 50.08],
+			["Helper", 31.76],
+			["1st Year", 24.86], 
+			["2nd Year", 31.76],
+			["3rd Year", 38.65],
+			["Journeyman (S)", 42.50],
+			["Journeyman (N)", 43.25],
+			["Lead Hand", 46.40],
+			["Foreman", 48.75],
+			["GF", 50.75],
 			["Custom", 40]
 		];
 
